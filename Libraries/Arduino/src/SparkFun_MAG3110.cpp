@@ -77,7 +77,7 @@ bool MAG3110::dataReady() {
 	return ((readRegister(MAG3110_DR_STATUS) & 0x8) >> 3);
 }
 
-void MAG3110::readMag(int* x, int* y, int* z){
+void MAG3110::readMag(int16_t* x, int16_t* y, int16_t* z){
 	//Read each axis
 	*x = readAxis(MAG3110_OUT_X_MSB);
 	*y = readAxis(MAG3110_OUT_Y_MSB);
@@ -96,7 +96,7 @@ void MAG3110::readMicroTeslas(float* x, float* y, float* z){
 //Note: Must be calibrated to use readHeading!!!
 float MAG3110::readHeading(){
 	
-	int x, y, z;
+	int16_t x, y, z;
 	readMag(&x, &y, &z);
 	
 	float xf = (float) x * 1.0f;
@@ -153,7 +153,7 @@ void MAG3110::rawData(bool raw){
 //Bit 0 of the LSB register is always 0 for some reason...
 //So we have to left shift the values by 1
 //Ask me how confused I was...
-void MAG3110::setOffset(uint8_t axis, int offset){
+void MAG3110::setOffset(uint8_t axis, int16_t offset){
 	
 	offset = offset << 1;
 	
@@ -168,7 +168,7 @@ void MAG3110::setOffset(uint8_t axis, int offset){
 }
 
 //See above
-int MAG3110::readOffset(uint8_t axis){
+int16_t MAG3110::readOffset(uint8_t axis){
 	return (readAxis(axis+8)) >> 1;
 }
 
@@ -231,7 +231,7 @@ void MAG3110::enterCalMode(){
 }
 
 void MAG3110::calibrate(){
-	int x, y, z;
+	int16_t x, y, z;
 	readMag(&x, &y, &z);
 	
 	bool changed = false; //Keep track of if a min/max is updated
@@ -303,7 +303,7 @@ void MAG3110::reset() {
 
 //This is private because you must read each axis for the data ready bit to be cleared
 //It may be confusing for casual users
-int MAG3110::readAxis(uint8_t axis){
+int16_t MAG3110::readAxis(uint8_t axis){
 	uint8_t lsbAddress, msbAddress;
 	uint8_t lsb, msb;
 	
@@ -316,6 +316,7 @@ int MAG3110::readAxis(uint8_t axis){
 	
 	lsb = readRegister(lsbAddress);
 	
-	int out = (lsb | (msb << 8)); //concatenate the MSB and LSB
+	int16_t out = (lsb | (msb << 8)); //concatenate the MSB and LSB
 	return out;
 }
+

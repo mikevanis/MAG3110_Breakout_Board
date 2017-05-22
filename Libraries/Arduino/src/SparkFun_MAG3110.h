@@ -131,7 +131,7 @@ class MAG3110
   
   bool dataReady();
   
-  void readMag(int* x, int* y, int* z);
+  void readMag(int16_t* x, int16_t* y, int16_t* z);
   void readMicroTeslas(float* x, float* y, float* z);
   float readHeading();
   
@@ -139,8 +139,8 @@ class MAG3110
   void triggerMeasurement();
   void rawData(bool raw);
   
-  void setOffset(uint8_t axis, int offset);
-  int readOffset(uint8_t axis);
+  void setOffset(uint8_t axis, int16_t offset);
+  int16_t readOffset(uint8_t axis);
 
   void start();
   void enterStandby();
@@ -185,7 +185,8 @@ class MAG3110
   bool activeMode;
   bool rawMode;
   
-  int readAxis(uint8_t axis);
+  int16_t readAxis(uint8_t axis);
 };
 
 #endif
+
